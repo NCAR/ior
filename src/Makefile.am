@@ -41,6 +41,15 @@ extraSOURCES  += aiori-HDF5.c
 extraLDADD    += -lhdf5 -lz
 endif
 
+if USE_Z5_AIORI
+extraSOURCES  += aiori-Z5.c z5wrapper.cc 
+extraCPPFLAGS += -I/glade/work/haiyingx/miniconda3/envs/z5-py36/include 
+extraCPPFLAGS += -I/glade/work/haiyingx/cz5test
+extraLDFLAGS  += -L/glade/work/haiyingx/miniconda3/envs/z5-py36/lib 
+extraLDFLAGS  += -L/glade/work/haiyingx/cz5test/bld/CMakeFiles/test_c.dir
+extraLDADD    += -lpthread -lboost_filesystem -lboost_system -lz 
+endif
+
 if USE_IME_AIORI
 extraSOURCES  += aiori-IME.c
 extraCPPFLAGS += -I/opt/ddn/ime/include
