@@ -2,6 +2,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.62])
+AC_LANG([C])
+AC_LANG([C++])
 
 AC_INIT([META_PACKAGE_NAME],[META_PACKAGE_VERSION],[],[META_PACKAGE_NAME])
 AC_CONFIG_MACRO_DIR([config])
@@ -36,10 +38,17 @@ esac
 AX_PROG_CC_MPI(,,[
     AC_MSG_FAILURE([MPI compiler requested, but could not use MPI.])
 ])
+AX_PROG_CXX_MPI
 
 AC_PROG_RANLIB
 # No reason not to require modern C at this point
 AC_PROG_CC_C99
+AC_PROG_CXX
+
+CXXFLAGS="-Werror -std=c++11"
+AC_MSG_CHECKING([whether CXX supports -std=c++11])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])], [AC_MSG_RESULT([yes]); CPPUTEST_CPP11FLAG="-std=c++11" ], [AC_MSG_RESULT([no])])
+CXXFLAGS="$saved_cxxflags"
 
 # Checks for libraries.
 
@@ -118,6 +127,17 @@ AM_COND_IF([USE_HDF5_AIORI],[
 ])
 
 
+# Z5 support
+AC_ARG_WITH([z5],
+        [AS_HELP_STRING([--with-z5],
+           [support IO with Z5 backend @<:@default=no@:>@])],
+        [],
+        [with_z5=no])
+AM_CONDITIONAL([USE_Z5_AIORI], [test x$with_z5 = xyes])
+AM_COND_IF([USE_Z5_AIORI],[
+        AC_DEFINE([USE_Z5_AIORI], [], [Build Z5 backend AIORI])
+	AC_SEARCH_LIBS([boost_filesystem], [boost_system],[zlib])
+])
 
 # HDFS support
 AC_ARG_WITH([hdfs],
