@@ -45,9 +45,9 @@ AC_PROG_RANLIB
 AC_PROG_CC_C99
 AC_PROG_CXX
 
-CXXFLAGS="-Werror -std=c++11"
-AC_MSG_CHECKING([whether CXX supports -std=c++11])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])], [AC_MSG_RESULT([yes]); CPPUTEST_CPP11FLAG="-std=c++11" ], [AC_MSG_RESULT([no])])
+CXXFLAGS="-Werror -std=c++14"
+AC_MSG_CHECKING([whether CXX supports -std=c++14])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])], [AC_MSG_RESULT([yes]); CXXFLAGS="-std=c++14" ], [AC_MSG_RESULT([no])])
 CXXFLAGS="$saved_cxxflags"
 
 # Checks for libraries.

@@ -9,7 +9,7 @@ noinst_HEADERS = ior.h utilities.h parse_options.h aiori.h iordef.h ior-internal
 
 lib_LIBRARIES = libaiori.a
 libaiori_a_SOURCES = ior.c mdtest.c utilities.c parse_options.c ior-output.c option.c
-
+CCLD = $(CXX)
 extraSOURCES = aiori.c aiori-DUMMY.c
 extraLDADD =
 extraLDFLAGS =
@@ -33,7 +33,7 @@ if USE_HDFS_AIORI
 extraSOURCES  += aiori-HDFS.c
 extraCPPFLAGS += -I/opt/hadoop-2.2.0/include
 extraLDFLAGS  += -L/opt/hadoop-2.2.0/lib/native
-extraLDADD    += -lhdfs
+extraLDADD    += -lhdfs 
 endif
 
 if USE_HDF5_AIORI
@@ -42,12 +42,14 @@ extraLDADD    += -lhdf5 -lz
 endif
 
 if USE_Z5_AIORI
-extraSOURCES  += aiori-Z5.c z5wrapper.cc 
-extraCPPFLAGS += -I/glade/work/haiyingx/miniconda3/envs/z5-py36/include 
-extraCPPFLAGS += -I/glade/work/haiyingx/cz5test
+extraSOURCES  += aiori-Z5.c z5wrapper.cc
+#LIBOBJS  += @LIBOBJS@
+extraCPPFLAGS += -I/glade/work/haiyingx/miniconda3/envs/z5-py36/include  -DWITH_ZLIB=ON
+extraCPPFLAGS  += -fPIC -pipe
 extraLDFLAGS  += -L/glade/work/haiyingx/miniconda3/envs/z5-py36/lib 
-extraLDFLAGS  += -L/glade/work/haiyingx/cz5test/bld/CMakeFiles/test_c.dir
-extraLDADD    += -lpthread -lboost_filesystem -lboost_system -lz 
+#extraLDFLAGS  += -L/glade/work/haiyingx/cz5test/bld/CMakeFiles/test_c.dir
+#extraLDFLAGS  += -std=c++14
+extraLDADD    += -lpthread -lboost_filesystem -lboost_system -lz  
 endif
 
 if USE_IME_AIORI
@@ -94,11 +96,13 @@ endif
 ior_SOURCES  += $(extraSOURCES)
 ior_LDFLAGS  += $(extraLDFLAGS)
 ior_LDADD    += $(extraLDADD)
+#ior_LDADD    += $(LIBOBJS)
 ior_CPPFLAGS += $(extraCPPFLAGS)
 
 mdtest_SOURCES  += $(extraSOURCES)
 mdtest_LDFLAGS  += $(extraLDFLAGS)
 mdtest_LDADD    += $(extraLDADD)
+#mdtest_LDADD    += $(LIBOBJS)
 mdtest_CPPFLAGS += $(extraCPPFLAGS)
 
 IOR_SOURCES  = $(ior_SOURCES)
