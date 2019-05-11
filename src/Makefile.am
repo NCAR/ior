@@ -45,10 +45,10 @@ if USE_Z5_AIORI
 extraSOURCES  += aiori-Z5.c z5wrapper.cc
 #LIBOBJS  += @LIBOBJS@
 extraCPPFLAGS += -I/glade/work/haiyingx/miniconda3/envs/z5-py36/include  -DWITH_ZLIB=ON
-extraCPPFLAGS  += -fPIC -pipe
+extraCPPFLAGS  += -fPIC -pipe 
 extraLDFLAGS  += -L/glade/work/haiyingx/miniconda3/envs/z5-py36/lib 
 #extraLDFLAGS  += -L/glade/work/haiyingx/cz5test/bld/CMakeFiles/test_c.dir
-#extraLDFLAGS  += -std=c++14
+extraLDFLAGS  += -std=c++11
 extraLDADD    += -lpthread -lboost_filesystem -lboost_system -lz  
 endif
 

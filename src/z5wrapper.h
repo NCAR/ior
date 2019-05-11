@@ -35,6 +35,9 @@ namespace z5 {
 
         void z5ReadInt64Subarray(char *path, long long int *array, unsigned int ndim, size_t *shape, size_t *offset);
 
+        size_t z5GetFileSize(char *path);
+
+        void z5Delete(char *path );
 #ifdef __cplusplus
     }
 }

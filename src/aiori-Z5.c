@@ -155,18 +155,9 @@ static void Z5_Close(void *fd, IOR_param_t * param)
 {
         if(param->dryRun)
           return;
-        /*(if (param->fd_fppReadCheck == NULL) {
-                HDF5_CHECK(H5Dclose(dataSet), "cannot close data set");
-                HDF5_CHECK(H5Sclose(dataSpace), "cannot close data space");
-                HDF5_CHECK(H5Sclose(fileDataSpace),
-                           "cannot close file data space");
-                HDF5_CHECK(H5Sclose(memDataSpace),
-                           "cannot close memory data space");
-                HDF5_CHECK(H5Pclose(xferPropList),
-                           " cannot close transfer property list");
+        if (rank == 0){
         }
-        HDF5_CHECK(H5Fclose(*(hid_t *) fd), "cannot close file");
-        free(fd);*/
+        //free(fd);
 }
 
 /*
@@ -175,9 +166,10 @@ static void Z5_Close(void *fd, IOR_param_t * param)
 static void Z5_Delete(char *testFileName, IOR_param_t * param)
 {
   if(param->dryRun)
-    return
-  MPIIO_Delete(testFileName, param);
-  return;
+    return;
+  z5Delete(testFileName);
+//  MPIIO_Delete(testFileName, param);
+  //return;
 }
 
 /*
@@ -207,7 +199,7 @@ Z5_GetFileSize(IOR_param_t * test, MPI_Comm testComm, char *testFileName)
 {
   if(test->dryRun)
     return 0;
-  return(MPIIO_GetFileSize(test, testComm, testFileName));
+  return test->blockSize*test->segmentCount*test->numTasks; 
 }
 
 /*

@@ -6,6 +6,7 @@
 #include <iostream>
 #include "z5wrapper.h"
 
+namespace fs = boost::filesystem;
 namespace z5 {
     extern "C" {
 
@@ -54,9 +55,9 @@ namespace z5 {
     long long int idata1;
     int64_t data1;
     long int data2;
-    std::cout<<"int64 "<<typeid(data1).name()<<" "<<sizeof(int64_t)<<std::endl;
-    std::cout<<"long int "<<typeid(data2).name()<<" "<<sizeof(long int)<<std::endl;
-    std::cout<<"long long int "<<typeid(idata1).name()<<" "<<sizeof(long long int)<<std::endl;
+    //std::cout<<"int64 "<<typeid(data1).name()<<" "<<sizeof(int64_t)<<std::endl;
+    //std::cout<<"long int "<<typeid(data2).name()<<" "<<sizeof(long int)<<std::endl;
+    //std::cout<<"long long int "<<typeid(idata1).name()<<" "<<sizeof(long long int)<<std::endl;
 }
 
     void z5WriteFloatSubarray(char *path, float *array, unsigned int ndim, size_t *shape, size_t *offset) {
@@ -114,6 +115,21 @@ namespace z5 {
         auto adp_array=xt::adapt(array,size,xt::no_ownership(),s);
         multiarray::readSubarray<long int>(ds,adp_array,offset_v.begin()); 
     }
+    size_t z5GetFileSize(char *path){
+        std::string path_s(path);
+	fs::ifstream file(path_s, std::ios::binary);
+	file.seekg(0, std::ios::end);
+	const std::size_t fileSize = file.tellg();
+	file.seekg(0, std::ios::beg);
+	file.close();
+        return fileSize;
+    }
+    void z5Delete(char *path ){
+        std::string path_s(path);
+        fs::path filename(path_s);
+        fs::remove_all(filename);
+    }
+      
 }
 
 }
