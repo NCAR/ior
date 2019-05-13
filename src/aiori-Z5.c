@@ -107,14 +107,14 @@ void *Z5_Open(char *testFileName, IOR_param_t * param)
         if (param->filePerProc == FALSE) {
                 fileSize *= param->numTasks;
         }
-        zShape[0] = fileSize;
-        zChunks[0] = param->transferSize;
+        zShape[0] = fileSize/ sizeof(IOR_size_t);
+        zChunks[0] = param->transferSize/sizeof(IOR_size_t);
         
         
 	if ( rank == 0) {
           z5CreateInt64Dataset(testFileName, ndim, zShape, zChunks, useZlib, level);
 	} 
-
+        printf("tran size=%lu,block size=%lu\n",param->transferSize,param->blockSize);
         return ((void*)testFileName);
 }
 
@@ -127,15 +127,16 @@ static IOR_offset_t Z5_Xfer(int access, void *fd, IOR_size_t * buffer,
 
         if(param->dryRun)
           return length;
-
+        char * fileName= (char *)fd;
         int ndim = NUM_DIMS;
         size_t chunks[NUM_DIMS] = {param->transferSize / sizeof(IOR_size_t)};
         size_t offset[NUM_DIMS] = {param->offset / sizeof(IOR_size_t)};
         /* access the file */
         if (access == WRITE) {  /* WRITE */
-                z5WriteInt64Subarray((char*)fd, buffer, ndim, chunks, offset);
+                printf("fileName = %s\n",fileName);
+                z5WriteInt64Subarray((char*)fileName, buffer, ndim, chunks, offset);
         } else {                /* READ or CHECK */
-                z5ReadInt64Subarray((char*)fd, buffer, ndim, chunks, offset);
+                z5ReadInt64Subarray((char*)fileName, buffer, ndim, chunks, offset);
         }
         return (length);
 }
@@ -167,7 +168,8 @@ static void Z5_Delete(char *testFileName, IOR_param_t * param)
 {
   if(param->dryRun)
     return;
-  z5Delete(testFileName);
+  if (rank == 0)
+    z5Delete(testFileName);
 //  MPIIO_Delete(testFileName, param);
   //return;
 }
