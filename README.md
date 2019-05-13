@@ -22,6 +22,10 @@ See also NOTES.txt
 3. Optionally, run "make install".  The installation prefix
    can be changed as an option to the "configure" script.
 
+4. If you want to compile Z5 option, you have to "module load gnu",
+   then "./configure --with-z5 CC=gcc CXX=g++"
+   the testing command should not use filePerProc mode (-F).
+   
 # Testing
 
   Run "make check" to invoke the unit test framework of Automake.
