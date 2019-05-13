@@ -16,7 +16,7 @@ install:
     # It seams that there are .debs releases for lustre, but its only for 16.04
     # So need to wait till travis is updated.
     # https://downloads.hpdd.intel.com/public/lustre/lustre-2.10.3/
-    # Install  Parallel netcdf
+    # Install Parallel netcdf
     # TODO: Not in repos for 14.04 trustz but comes 16.04 xenial
     #- sudo apt-get install -y libpnetcdf-dev pnetcdf-bin
     # Install HDFS
