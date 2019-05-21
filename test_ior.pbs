@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# PBS batch script to run an MPI application
+#
+#PBS -N hdf5par            
+#PBS -A NTDD0004        
+#PBS -l walltime=00:30:00               
+#PBS -q regular          
+#PBS -j oe     
+#PBS -M haiyingx@ucar.edu
+#PBS -l select=1:ncpus=2:mpiprocs=1                 
+
+### setenv OMP_NUM_THREADS 1
+### run the executable
+mkdir -p /glade/scratch/haiyingx/temp
+export TMPDIR=/glade/scratch/haiyingx/temp
+echo $LD_LIBRARY_PATH
+
+
+
+#for POSIX
+mpirun -n 2 ./src/ior  -a POSIX  -C -Q 5 -g -d 2              -k -Y     -F -e -i3 -m -t 64000k -b 64000k -o /glade/scratch/haiyingx/test_ior/ior
+mpirun -n 2 ./src/ior  -a POSIX  -C -Q 1 -g -d 2              -k -Y     -F -e -i3 -m -t 128000k -b 128000k -o /glade/scratch/haiyingx/test_ior/ior
+mpirun -n 2 ./src/ior  -a POSIX  -C -Q 2 -g -d 2              -k -Y     -F -e -i3 -m -t 256000k -b 256000k -o /glade/scratch/haiyingx/test_ior/ior
+mpirun -n 2 ./src/ior  -a POSIX  -C -Q 3 -g -d 2              -k -Y     -F -e -i3 -m -t 512000k -b 512000k -o /glade/scratch/haiyingx/test_ior/ior
+mpirun -n 2 ./src/ior  -a POSIX  -C -Q 4 -g -d 2              -k -Y     -F -e -i3 -m -t 1024000k -b 1024000k -o /glade/scratch/haiyingx/test_ior/ior
+
+#mpirun -n 8 ./src/ior  -a POSIX  -C -Q 4 -g  -d 2                -k  -Y   -e -i3 -m -t 1024m -b 64g -o /glade/scratch/haiyingx/test_ior/ior
+
+#for Z5
+#mpirun -n 16 ./src/ior -a Z5 -C -Q 1 -d 2 -Y -g -u -e -i3 -m -t 64000k -b 64000k -o /glade/scratch/haiyingx/test_ior/ior
+#mpirun -n 16 ./src/ior -a Z5 -C -Q 2 -d 2 -Y -g -u -e -i3 -m -t 128000k -b 128000k -o /glade/scratch/haiyingx/test_ior/ior
+#mpirun -n 16 ./src/ior -a Z5 -C -Q 3 -d 2 -Y -g -u -e -i3 -m -t 256000k -b 256000k -o /glade/scratch/haiyingx/test_ior/ior
+#mpirun -n 16 ./src/ior -a Z5 -C -Q 4 -d 2 -Y -g -u -e -i3 -m -t 512000k -b 512000k -o /glade/scratch/haiyingx/test_ior/ior
+#mpirun -n 16 ./src/ior -a Z5 -C -Q 5 -d 2 -Y -g -u -e -i3 -m -t 1024000k -b 1024000k -o /glade/scratch/haiyingx/test_ior/ior
+#mpirun -n 16 ./src/ior -a Z5 -C -Q 5 -d 2 -Y -g -u -e -i3 -m -t 2048000k -b 2048000k -o /glade/scratch/haiyingx/test_ior/ior
