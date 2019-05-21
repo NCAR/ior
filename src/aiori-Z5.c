@@ -49,7 +49,7 @@
 
 static IOR_offset_t SeekOffset(void *, IOR_offset_t, IOR_param_t *);
 static void SetupDataSet(void *, IOR_param_t *);
-void *Z5_Open(char *, IOR_param_t *);
+static void *Z5_Open(char *, IOR_param_t *);
 static void *Z5_Create(char *, IOR_param_t *);
 static IOR_offset_t Z5_Xfer(int, void *, IOR_size_t *,
                            IOR_offset_t, IOR_param_t *);
@@ -88,18 +88,11 @@ int newlyOpenedFile;            /* newly opened file */
  */
 static void *Z5_Create(char *testFileName, IOR_param_t *param)
 {
-        Z5_Open(testFileName, param);
-}
-/*
- * Open a file through the HDF5 interface.
- */
-void *Z5_Open(char *testFileName, IOR_param_t * param)
-{
         size_t zShape[NUM_DIMS];
         size_t zChunks[NUM_DIMS];
         int ndim = NUM_DIMS;
         int useZlib = 1;
-        int level = 1;
+        int level = 0;
         if(param->dryRun)
           return 0;
 
@@ -117,6 +110,13 @@ void *Z5_Open(char *testFileName, IOR_param_t * param)
         printf("tran size=%lu,block size=%lu\n",param->transferSize,param->blockSize);
         return ((void*)testFileName);
 }
+/*
+ * Open a file through the HDF5 interface.
+ */
+static void *Z5_Open(char *testFileName, IOR_param_t * param)
+{
+        return ((void*)testFileName);
+}
 
 /*
  * Write or read access to file using the HDF5 interface.
@@ -132,10 +132,12 @@ static IOR_offset_t Z5_Xfer(int access, void *fd, IOR_size_t * buffer,
         size_t chunks[NUM_DIMS] = {param->transferSize / sizeof(IOR_size_t)};
         size_t offset[NUM_DIMS] = {param->offset / sizeof(IOR_size_t)};
         /* access the file */
+        MPI_CHECK(MPI_Barrier(testComm), "barrier error");
         if (access == WRITE) {  /* WRITE */
-                printf("fileName = %s\n",fileName);
+                printf("rank= %d,fileName = %s\n",rank,fileName);
                 z5WriteInt64Subarray((char*)fileName, buffer, ndim, chunks, offset);
         } else {                /* READ or CHECK */
+                printf("read rank= %d,fileName = %s\n",rank,fileName);
                 z5ReadInt64Subarray((char*)fileName, buffer, ndim, chunks, offset);
         }
         return (length);
@@ -166,10 +168,13 @@ static void Z5_Close(void *fd, IOR_param_t * param)
  */
 static void Z5_Delete(char *testFileName, IOR_param_t * param)
 {
+  printf("delete\n");
   if(param->dryRun)
     return;
-  if (rank == 0)
+  if (rank == 0){
+    printf("delete rank=0\n");
     z5Delete(testFileName);
+  }
 //  MPIIO_Delete(testFileName, param);
   //return;
 }
@@ -209,7 +214,8 @@ Z5_GetFileSize(IOR_param_t * test, MPI_Comm testComm, char *testFileName)
  */
 static int Z5_Access(const char *path, int mode, IOR_param_t *param)
 {
+  printf("Z5_access\n");
   if(param->dryRun)
     return 0;
-  return(MPIIO_Access(path, mode, param));
+  return 0;
 }

@@ -52,17 +52,12 @@ namespace z5 {
         handle::Dataset handle_(path_s);
         handle_.createDir();
         writeMetadata(handle_, int64Meta);
-    long long int idata1;
-    int64_t data1;
-    long int data2;
-    //std::cout<<"int64 "<<typeid(data1).name()<<" "<<sizeof(int64_t)<<std::endl;
-    //std::cout<<"long int "<<typeid(data2).name()<<" "<<sizeof(long int)<<std::endl;
-    //std::cout<<"long long int "<<typeid(idata1).name()<<" "<<sizeof(long long int)<<std::endl;
 }
 
     void z5WriteFloatSubarray(char *path, float *array, unsigned int ndim, size_t *shape, size_t *offset) {
         std::string path_s(path);
         auto ds =openDataset(path_s);
+        std::cout<<"after open"<<std::endl;
         size_t size = 1;
         std::vector<std::size_t> shape_v(shape,shape + ndim); 
         for (std::vector<size_t>::const_iterator i = shape_v.begin(); i != shape_v.end(); ++i)
@@ -74,7 +69,9 @@ namespace z5 {
 
     void z5WriteInt64Subarray(char *path, long long int *array, unsigned int ndim, size_t *shape, size_t *offset) {
         std::string path_s(path);
+        std::cout<<"open dataset "<< offset[0]<<std::endl;
         auto ds =openDataset(path_s);
+        std::cout<<"offset "<< offset[0]<<std::endl;
         using vec_type = std::vector<long int>;
         size_t size = 1;
         std::vector<std::size_t> shape_v(shape,shape + ndim); 
@@ -126,8 +123,10 @@ namespace z5 {
     }
     void z5Delete(char *path ){
         std::string path_s(path);
+        handle::Dataset handle_(path_s);
         fs::path filename(path_s);
-        fs::remove_all(filename);
+        if (handle_.exists())
+           fs::remove_all(filename);
     }
       
 }
